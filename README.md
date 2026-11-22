@@ -2,6 +2,8 @@
   
 > An AI-powered credit card optimizer that pairs Google ADK and Gemini with a deterministic SQLite-backed calculation engine to find shoppers the single best card for any purchase.
 
+🔗 **Live Demo:** [https://perkpilot-551u.onrender.com/](https://perkpilot-551u.onrender.com/)
+
 ---
 
 ## 1. Overview
