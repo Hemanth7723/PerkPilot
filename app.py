@@ -1,6 +1,9 @@
 """PerkPilot — AI-Powered Credit Card Recommendation Dashboard."""
 import streamlit as st
 import pandas as pd
+import importlib
+import agent
+importlib.reload(agent)
 from agent import run_agent_on_prompt
 from db.seed_db import seed_if_empty
 

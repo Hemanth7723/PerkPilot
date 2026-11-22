@@ -28,6 +28,11 @@ The AI Agent interprets the intent, calls the SQLite calculation engine, highlig
 
 ![PerkPilot Results and Card Comparison Dashboard](image2.png)
 
+### Live Gemini Model Execution
+The agent autonomously parses natural language and executes tool queries live using `gemini-3.1-flash-lite`:
+
+![Gemini Live Model Interpretation Banner](image3.png)
+
 ---
 
 ## 3. Tech Stack
