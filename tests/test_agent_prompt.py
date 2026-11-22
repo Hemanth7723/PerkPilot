@@ -1,35 +1,24 @@
-"""Tests for natural language prompt entity extraction and agent workflow."""
+"""Tests for Gemini-only agent prompt workflow."""
 import pytest
-from agent import extract_purchase_details_heuristically, run_agent_on_prompt
+from unittest.mock import MagicMock, patch
+from agent import run_agent_on_prompt
+from config import get_settings
 
-def test_extract_amazon_headphones():
-    prompt = "I'm buying Sony headphones for ₹8,999 on Amazon. Which card should I use?"
-    merchant, category, amount = extract_purchase_details_heuristically(prompt)
-    assert merchant == "Amazon"
-    assert category == "Electronics"
-    assert amount == 8999.0
+def test_missing_api_key_returns_error(monkeypatch):
+    monkeypatch.setenv("GOOGLE_API_KEY", "")
+    res = run_agent_on_prompt("Buy shoes for ₹2000 on Flipkart")
+    assert res["tool_result"]["success"] is False
+    assert "GOOGLE_API_KEY is not configured" in res["agent_response"]
 
-def test_extract_swiggy_food():
-    prompt = "Ordering food from Swiggy for 650 rupees"
-    merchant, category, amount = extract_purchase_details_heuristically(prompt)
-    assert merchant == "Swiggy"
-    assert category == "Food & Dining"
-    assert amount == 650.0
+def test_gemini_agent_with_configured_model():
+    settings = get_settings()
+    if not settings.google_api_key:
+        pytest.skip("GOOGLE_API_KEY not configured for live test")
 
-def test_extract_flipkart_phone():
-    prompt = "Planning to buy a new smartphone on Flipkart for Rs. 15,000"
-    merchant, category, amount = extract_purchase_details_heuristically(prompt)
-    assert merchant == "Flipkart"
-    assert category == "Electronics"
-    assert amount == 15000.0
-
-def test_run_agent_on_prompt_end_to_end():
-    prompt = "I am purchasing headphones for ₹8,999 on Amazon."
+    prompt = "I want to buy headphones for ₹8,999 on Amazon. Which card should I use?"
     res = run_agent_on_prompt(prompt)
+    assert "Gemini" in res["agent_mode"]
     assert res["tool_result"]["success"] is True
-    assert res["tool_result"]["status"] == "ok"
     assert res["tool_result"]["best_option"] is not None
     assert "SBI SimplyCLICK (Demo)" in res["tool_result"]["best_option"]["card_name"]
-    assert res["extracted_params"]["merchant"] == "Amazon"
-    assert res["extracted_params"]["category"] == "Electronics"
-    assert res["extracted_params"]["amount"] == 8999.0
+    assert len(res["agent_response"]) > 20

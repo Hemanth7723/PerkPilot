@@ -152,7 +152,7 @@ if "agent_output" in st.session_state and st.session_state["agent_output"]:
     tool_res = res["tool_result"]
     extracted = res["extracted_params"]
     explanation = res["agent_response"]
-    mode_label = "Gemini ADK Agent" if res["agent_mode"] == "gemini-adk" else "PerkPilot AI Agent Engine"
+    mode_label = res["agent_mode"]
 
     # Agent Extraction Summary Banner
     st.markdown(f"""
